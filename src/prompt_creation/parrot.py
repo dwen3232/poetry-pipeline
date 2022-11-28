@@ -57,10 +57,13 @@ class ParrotPromptCreator:
         res = []
         r.extract_keywords_from_sentences(prompt)
         pat = "|".join(r.get_ranked_phrases())
+        # hack to remove pesky parenthesis
+        pat = pat.replace(')', '').replace('(', '')
         for line in prompt:
             if (len(line) == 0):
                 continue
-            line = str.lower(line)
+            # remove special characters and convert to lowercase
+            line = " ".join(re.findall(r"[a-zA-Z0-9]+", line)).lower()
             res.append(" ".join(re.findall(pat, line)))
 
         return res

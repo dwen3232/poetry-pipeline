@@ -1,4 +1,11 @@
 from typing import Union, List
+from textblob import TextBlob
+from textblob.np_extractors import ConllExtractor
+from rake_nltk import Rake
+import nltk
+import re
+nltk.download('stopwords')
+nltk.download('punkt')
 
 import replicate
 
@@ -29,17 +36,14 @@ class ParrotPromptCreator:
         # case where we generate multiple prompts per stanza
         if isinstance(parsed_text[0], list) and not prompt_by_stanza:
             for stanza in parsed_text:
-                stanza_prompts = ['\n'.join(stanza[i * n: (i + 1) * n]) for i in range((len(stanza) + n - 1) // n)]
+                stanza_prompts = [', '.join(self.collect_noun_phrases(stanza[i * n: (i + 1) * n])) for i in range((len(stanza) + n - 1) // n)]
                 prompts += stanza_prompts
         # case where we generate single prompt per stanza
         elif isinstance(parsed_text[0], list) and prompt_by_stanza:
-            prompts = ['\n'.join(stanza) for stanza in parsed_text]
+            prompts = [', '.join(self.collect_noun_phrases(stanza)) for stanza in parsed_text]
         # case where we generate prompts by line
         elif not isinstance(parsed_text[0], list):
-            prompts = ['\n'.join(parsed_text[i * n: (i + 1) * n]) for i in range((len(parsed_text) + n - 1) // n)]
-
-        for i, prompt in enumerate(prompts):
-            prompts[i] = prompt.lower()
+            prompts = [', '.join(self.collect_noun_phrases(parsed_text[i * n: (i + 1) * n])) for i in range((len(parsed_text) + n - 1) // n)]
 
         for i, prompt in enumerate(prompts):
             returned_prompts = self.model.predict(prompt=prompt)
@@ -48,5 +52,16 @@ class ParrotPromptCreator:
 
         return prompts
 
+    def collect_noun_phrases(self, prompt):
+        r = Rake()
+        res = []
+        r.extract_keywords_from_sentences(prompt)
+        pat = "|".join(r.get_ranked_phrases())
+        for line in prompt:
+            if (len(line) == 0):
+                continue
+            line = str.lower(line)
+            res.append(" ".join(re.findall(pat, line)))
 
+        return res
 

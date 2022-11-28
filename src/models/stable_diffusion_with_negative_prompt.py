@@ -2,7 +2,7 @@ import os
 import requests
 from typing import List
 import replicate
-NEGATIVE_PROMPT = "text, alphabet, words, caption"
+NEGATIVE_PROMPT = "text, alphabet, words, caption, nsfw"
 
 
 class StableDiffusionWithNegativePrompt:

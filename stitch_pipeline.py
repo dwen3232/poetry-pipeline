@@ -49,9 +49,9 @@ if __name__ == '__main__':
     dotenv.load_dotenv()
 
     kwargs = {
-        # 'text_file_name': 'aedh_wishes_for_the_cloths_of_heaven.txt',
-        'text_file_name': 'poverty.txt',
-        'output_dir_name': 'parrot_test_poverty_1',
+        'text_file_name': 'aedh_wishes_for_the_cloths_of_heaven.txt',
+        # 'text_file_name': 'poverty.txt',
+        'output_dir_name': 'parrot_test_aedh_1',
 
         'parser_type': 'poetry',
         'parse_by_stanza': True,

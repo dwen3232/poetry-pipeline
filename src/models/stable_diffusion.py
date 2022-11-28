@@ -29,6 +29,7 @@ class StableDiffusion:
             raise ValueError('output_dir_name already exists')
 
         img_urls = []
+        file_paths = []
         prompts_file = open(f'{output_dir}/prompts.txt', 'w')
 
         for i, prompt in enumerate(prompts):
@@ -44,9 +45,11 @@ class StableDiffusion:
             img_urls.append(output[0])
             # write image to local
             img_data = requests.get(output[0]).content
-            with open(f'{output_dir}/{i}.png', 'wb') as f:
+            file_name = f'{output_dir}/{i}.png'
+            with open(file_name, 'wb') as f:
                 f.write(img_data)
-            prompts_file.write(f'{prompt}\n')
+            file_paths.append(file_name)
+            prompts_file.write(f'{prompt}\n\n')
 
         prompts_file.close()
-        return img_urls
+        return img_urls, file_paths

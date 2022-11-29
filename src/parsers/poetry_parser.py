@@ -58,8 +58,9 @@ class PoetryParser:
             # if we have an empty string, we can break by stanza using empty str lines
             if '' in lines:
                 # get line indices with empty strings
-                break_idx = [-1] + [idx for idx, line in enumerate(lines) if line == ''] + [-1]
-                stanzas = [lines[break_idx[i] + 1: break_idx[i+1]] for i in range(len(break_idx ) - 1)]
+                break_idx = [-1] + [idx for idx, line in enumerate(lines) if line == '']
+                stanzas = [lines[break_idx[i] + 1: break_idx[i+1]] for i in range(len(break_idx) - 1)]
+                stanzas.append(lines[break_idx[-1] + 1:])
 
             # otherwise, we need to implicitly break by stanza
             else:
